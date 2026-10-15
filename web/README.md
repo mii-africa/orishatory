@@ -39,6 +39,7 @@ web/
 │       ├── recherche.astro                       # recherche côté client
 │       ├── search-index.json.ts                  # index consommé par la recherche
 │       ├── dossiers/index.astro, [slug].astro    # dossiers thématiques
+│       ├── 404.astro                             # page « introuvable » (carrefour d'Èṣù)
 │       ├── nouveautes.astro                      # dernières fiches ajoutées
 │       └── rss.xml.ts                            # flux RSS des nouveautés
 └── astro.config.mjs
@@ -131,6 +132,21 @@ lus par la collection `dossiers` de [`src/content.config.ts`](src/content.config
   fiches concernées apparaissent automatiquement avec le premier dossier.
 - Les dossiers ne sont pas (encore) dans la recherche, ni dans Nouveautés ni
   dans le flux RSS.
+
+## Page 404
+
+[`src/pages/404.astro`](src/pages/404.astro) produit `dist/404.html`, que Vercel
+sert pour toute adresse inconnue. Elle est en `noindex` et hors du sitemap.
+L'illustration est en SVG inline (themée par les tokens de couleur, donc claire
+et sombre) : les deux « 4 » encadrent l'emblème du projet, un carrefour, en
+clin d'œil à Èṣù, Legba et Papa Legba, gardiens des carrefours dans le codex.
+Le lien vers la fiche d'Èṣù est résolu au build (`eshu-elegba`) et se replie sur
+du texte simple si la fiche disparaît.
+
+Côté client, le script lit la dernière partie de l'adresse demandée (ex.
+`/shango-dieu`), la compare aux noms de `/search-index.json` et propose jusqu'à
+trois fiches ainsi qu'une recherche préremplie. Sans correspondance, rien n'est
+affiché de plus. L'animation de dessin est désactivée pour `prefers-reduced-motion`.
 
 ## Nouveautés & RSS
 

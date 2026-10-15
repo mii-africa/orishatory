@@ -1,0 +1,459 @@
+---
+import BaseLayout from "../layouts/BaseLayout.astro";
+import { CATEGORY_LABELS_SINGULAR, REGION_LABELS } from "../lib/constants";
+import { entityHref, getEntityById } from "../lib/data";
+
+// Le fil conducteur : l'emblème du projet est un carrefour, et le codex compte
+// Èṣù, Legba et Papa Legba, gardiens des carrefours. Si la fiche disparaît un
+// jour, la page reste valable : le nom devient simple texte.
+const eshu = getEntityById("eshu-elegba");
+
+const regionLabelsJson = JSON.stringify(REGION_LABELS);
+const categoryLabelsJson = JSON.stringify(CATEGORY_LABELS_SINGULAR);
+
+// Quatre chemins, comme les quatre branches de la croix.
+const paths = [
+  { href: "/", label: "Retour à l'accueil", hint: "Les six aires culturelles", icon: "home" },
+  { href: "/explorer/", label: "Une fiche au hasard", hint: "Laissez Èṣù décider", icon: "dice" },
+  { href: "/dossiers/", label: "Les dossiers", hint: "Des parcours approfondis", icon: "folder" },
+  { href: "/tags/", label: "Les tags", hint: "Parcourir par motifs", icon: "tag" },
+] as const;
+---
+
+<BaseLayout
+  title="Page introuvable"
+  description="Cette page n'existe pas ou a changé d'adresse."
+  noindex
+>
+  <section class="container lost">
+    <p class="eyebrow">Erreur 404</p>
+
+    <svg class="numerals" viewBox="0 0 330 124" fill="none" stroke-width="8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">
+      <g class="digit" style="--delay: 0ms">
+        <path pathLength="1" d="M58 10 10 82h76" />
+        <path pathLength="1" d="M58 10v104" />
+      </g>
+
+      <g class="emblem">
+        <circle class="ring" pathLength="1" cx="165" cy="62" r="52" />
+        <g class="cross">
+          <path class="arm" pathLength="1" d="M165 32v60" style="--delay: 520ms" />
+          <path class="arm" pathLength="1" d="M135 62h60" style="--delay: 620ms" />
+        </g>
+        <circle class="dot" cx="165" cy="62" r="11" />
+      </g>
+
+      <g class="digit" style="--delay: 260ms" transform="translate(244 0)">
+        <path pathLength="1" d="M58 10 10 82h76" />
+        <path pathLength="1" d="M58 10v104" />
+      </g>
+    </svg>
+
+    <h1>Page introuvable</h1>
+    <p class="lede">
+      Vous voilà à un carrefour. Dans la tradition yoruba, c'est là que se tient{" "}
+      {eshu ? <a href={entityHref(eshu)}>{eshu.nom}</a> : "Èṣù"}, messager entre les mondes et gardien de
+      l'imprévisible. Il a dû brouiller la piste : voici quatre chemins pour reprendre la route.
+    </p>
+
+    <ul class="paths">
+      {
+        paths.map((path) => (
+          <li>
+            <a class="path" href={path.href}>
+              <span class="path-icon" aria-hidden="true">
+                <svg viewBox="0 0 24 24" width="1.25rem" height="1.25rem" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+                  {path.icon === "home" && (
+                    <>
+                      <path d="M4 11l8-7 8 7" />
+                      <path d="M6 10v9h12v-9" />
+                      <path d="M10 19v-5h4v5" />
+                    </>
+                  )}
+                  {path.icon === "dice" && (
+                    <>
+                      <rect x="4" y="4" width="16" height="16" rx="3.5" />
+                      <circle cx="9" cy="9" r="1" fill="currentColor" stroke="none" />
+                      <circle cx="15" cy="9" r="1" fill="currentColor" stroke="none" />
+                      <circle cx="12" cy="12" r="1" fill="currentColor" stroke="none" />
+                      <circle cx="9" cy="15" r="1" fill="currentColor" stroke="none" />
+                      <circle cx="15" cy="15" r="1" fill="currentColor" stroke="none" />
+                    </>
+                  )}
+                  {path.icon === "folder" && (
+                    <path d="M3.5 7.5A1.5 1.5 0 0 1 5 6h4l2 2h8a1.5 1.5 0 0 1 1.5 1.5v8A1.5 1.5 0 0 1 19 19H5a1.5 1.5 0 0 1-1.5-1.5v-10Z" />
+                  )}
+                  {path.icon === "tag" && (
+                    <>
+                      <path d="M3.5 3.5h8l9 9-8 8-9-9v-8Z" />
+                      <circle cx="8" cy="8" r="1.3" />
+                    </>
+                  )}
+                </svg>
+              </span>
+              <span class="path-text">
+                <span class="path-label">{path.label}</span>
+                <span class="path-hint">{path.hint}</span>
+              </span>
+            </a>
+          </li>
+        ))
+      }
+    </ul>
+
+    <section id="suggestions" class="suggestions" aria-live="polite" hidden>
+      <h2>Peut-être cherchiez-vous…</h2>
+      <ul id="suggestions-list"></ul>
+    </section>
+
+    <form class="search" action="/recherche/" method="get" role="search">
+      <label class="visually-hidden" for="lost-search">Rechercher une fiche</label>
+      <input id="lost-search" type="search" name="q" placeholder="Ex. Anansi, Yoruba, trickster…" autocomplete="off" />
+      <button type="submit">Rechercher</button>
+    </form>
+  </section>
+</BaseLayout>
+
+<script define:vars={{ regionLabelsJson, categoryLabelsJson }}>
+  // À partir de l'adresse demandée (ex: /shango-dieu), on propose les fiches
+  // dont le nom ressemble, et on préremplit la recherche si l'on en trouve.
+  const regionLabels = JSON.parse(regionLabelsJson);
+  const categoryLabels = JSON.parse(categoryLabelsJson);
+
+  const norm = (text) => text.normalize("NFD").replace(/\p{M}/gu, "").toLowerCase();
+
+  function guessFromPath() {
+    let segment = "";
+    try {
+      segment = decodeURIComponent(location.pathname).split("/").filter(Boolean).pop() ?? "";
+    } catch {
+      return "";
+    }
+    return segment.replace(/\.[a-z0-9]+$/i, "").replace(/[-_+]+/g, " ").trim();
+  }
+
+  const guess = guessFromPath();
+  const words = norm(guess)
+    .split(/\s+/)
+    .filter((word) => word.length >= 3);
+
+  if (words.length > 0) {
+    fetch("/search-index.json")
+      .then((res) => res.json())
+      .then((index) => {
+        // Un mot long est plus parlant qu'un mot court et générique (« dieu ») :
+        // on pondère par la longueur et on ne garde que les meilleures fiches.
+        const scored = index
+          .map((entry) => {
+            const haystack = norm(`${entry.id} ${entry.nom}`);
+            const score = words.filter((word) => haystack.includes(word)).reduce((sum, word) => sum + word.length, 0);
+            return { entry, score };
+          })
+          .filter((item) => item.score > 0);
+        const best = Math.max(0, ...scored.map((item) => item.score));
+        const matches = scored
+          .filter((item) => item.score === best)
+          .sort((a, b) => a.entry.nom.localeCompare(b.entry.nom, "fr"))
+          .slice(0, 3);
+
+        if (matches.length === 0) return;
+
+        const list = document.getElementById("suggestions-list");
+        for (const { entry } of matches) {
+          const li = document.createElement("li");
+          const a = document.createElement("a");
+          a.href = entry.href;
+          a.textContent = entry.nom;
+          const meta = document.createElement("span");
+          meta.textContent = `${categoryLabels[entry.categorie]} · ${regionLabels[entry.region]}`;
+          li.append(a, meta);
+          list.appendChild(li);
+        }
+        document.getElementById("suggestions").hidden = false;
+        document.getElementById("lost-search").value = guess;
+      })
+      .catch(() => {});
+  }
+</script>
+
+<style>
+  .lost {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding-block: 3rem 5rem;
+    text-align: center;
+  }
+
+  .eyebrow {
+    margin: 0 0 1.5rem;
+  }
+
+  .numerals {
+    width: min(24rem, 100%);
+    height: auto;
+    margin-bottom: 2rem;
+    color: var(--fg);
+    stroke: currentColor;
+  }
+
+  /* Les deux « 4 » se tracent d'un trait, puis l'emblème du projet (le « 0 »)
+     se dessine : le cercle, la croix, puis le point. La croix part de travers
+     et se remet d'aplomb : Èṣù brouille les chemins, le visiteur les retrouve. */
+  .digit path,
+  .ring,
+  .arm {
+    stroke-dasharray: 1;
+    animation: draw 900ms var(--ease-out) backwards;
+  }
+
+  .digit path {
+    animation-delay: var(--delay);
+  }
+
+  .ring {
+    animation-delay: 160ms;
+  }
+
+  .arm {
+    animation-delay: var(--delay);
+    animation-duration: 600ms;
+  }
+
+  .emblem {
+    stroke: var(--accent);
+  }
+
+  .cross {
+    transform-box: fill-box;
+    transform-origin: center;
+    animation: align 1100ms var(--ease-out) 420ms backwards;
+    transition: transform 600ms var(--ease-out);
+  }
+
+  .numerals:hover .cross {
+    transform: rotate(90deg);
+  }
+
+  .dot {
+    fill: var(--accent);
+    stroke: none;
+    transform-box: fill-box;
+    transform-origin: center;
+    animation: pop 500ms var(--ease-out) 760ms backwards;
+  }
+
+  @keyframes draw {
+    from {
+      stroke-dashoffset: 1;
+    }
+    to {
+      stroke-dashoffset: 0;
+    }
+  }
+
+  @keyframes align {
+    from {
+      transform: rotate(-45deg);
+    }
+    to {
+      transform: rotate(0);
+    }
+  }
+
+  @keyframes pop {
+    from {
+      transform: scale(0);
+      opacity: 0;
+    }
+    to {
+      transform: scale(1);
+      opacity: 1;
+    }
+  }
+
+  /* La règle globale raccourcit les durées mais pas les délais : on coupe
+     l'animation pour que le dessin soit visible tout de suite. */
+  @media (prefers-reduced-motion: reduce) {
+    .digit path,
+    .ring,
+    .arm,
+    .cross,
+    .dot {
+      animation: none;
+    }
+  }
+
+  h1 {
+    margin: 0 0 0.75rem;
+  }
+
+  .lede {
+    max-width: 52ch;
+    margin: 0 0 2rem;
+    color: var(--fg-muted);
+  }
+
+  .lede a {
+    color: var(--accent);
+    text-decoration-thickness: from-font;
+    text-underline-offset: 0.15em;
+    transition: opacity var(--duration-fast) var(--ease-out);
+  }
+
+  .lede a:hover {
+    opacity: 0.75;
+  }
+
+  .paths {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 0.75rem;
+    width: min(38rem, 100%);
+    text-align: left;
+  }
+
+  @media (min-width: 36rem) {
+    .paths {
+      grid-template-columns: 1fr 1fr;
+    }
+  }
+
+  .path {
+    display: flex;
+    align-items: center;
+    gap: 0.9rem;
+    height: 100%;
+    padding: 1rem 1.1rem;
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    background: var(--bg-elevated);
+    color: var(--fg);
+    text-decoration: none;
+    transition:
+      border-color var(--duration-fast) var(--ease-out),
+      transform var(--duration-fast) var(--ease-out),
+      box-shadow var(--duration-fast) var(--ease-out);
+  }
+
+  .path:hover {
+    border-color: var(--accent);
+    transform: translateY(-2px);
+    box-shadow: 0 8px 20px oklch(0 0 0 / 0.07);
+  }
+
+  .path:active {
+    transform: translateY(-1px) scale(0.99);
+    transition-duration: 100ms;
+  }
+
+  .path-icon {
+    display: grid;
+    place-items: center;
+    flex-shrink: 0;
+    width: 2.5rem;
+    height: 2.5rem;
+    border-radius: 0.6rem;
+    background: var(--bg);
+    border: 1px solid var(--border);
+    color: var(--accent);
+  }
+
+  .path-text {
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+  }
+
+  .path-label {
+    font-weight: 700;
+  }
+
+  .path-hint {
+    font-size: 0.85rem;
+    color: var(--fg-muted);
+  }
+
+  .suggestions {
+    width: min(38rem, 100%);
+    margin-top: 2rem;
+    text-align: left;
+  }
+
+  .suggestions h2 {
+    margin: 0 0 0.5rem;
+    font-size: 1rem;
+    font-weight: 700;
+  }
+
+  .suggestions ul {
+    display: flex;
+    flex-direction: column;
+    gap: 0.35rem;
+  }
+
+  /* Éléments créés par le script : sans l'attribut du CSS scopé d'Astro, d'où :global(). */
+  .suggestions :global(li) {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    gap: 0.25rem 0.75rem;
+  }
+
+  .suggestions :global(a) {
+    color: var(--accent);
+    font-weight: 600;
+    text-decoration-thickness: from-font;
+    text-underline-offset: 0.15em;
+  }
+
+  .suggestions :global(span) {
+    font-size: 0.8rem;
+    color: var(--fg-muted);
+  }
+
+  .search {
+    display: flex;
+    gap: 0.5rem;
+    width: min(38rem, 100%);
+    margin-top: 2rem;
+  }
+
+  .search input {
+    flex: 1;
+    min-width: 0;
+    font: inherit;
+    padding: 0.7rem 1rem;
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    background: var(--bg-elevated);
+    color: var(--fg);
+  }
+
+  .search input:focus-visible {
+    outline: 2px solid var(--accent);
+    outline-offset: 1px;
+  }
+
+  .search button {
+    font: inherit;
+    font-weight: 600;
+    padding: 0.7rem 1.1rem;
+    border: none;
+    border-radius: var(--radius);
+    background: var(--accent);
+    color: var(--accent-fg);
+    cursor: pointer;
+    transition:
+      opacity var(--duration-fast) var(--ease-out),
+      transform 100ms var(--ease-out);
+  }
+
+  .search button:hover {
+    opacity: 0.9;
+  }
+
+  .search button:active {
+    transform: scale(0.96);
+  }
+</style>
