@@ -57,7 +57,7 @@ images:
   - fichier: carte-ogun-atlantique.svg
     credit: "Orishatory"
     licence: "CC BY 4.0"
-    source: "https://github.com/vidjinnangni/orishatory/blob/main/dossiers/images/ogun-gu-ogou-le-fer-et-la-guerre/carte-ogun-atlantique.svg"
+    source: "https://github.com/mii-africa/orishatory/blob/main/dossiers/images/ogun-gu-ogou-le-fer-et-la-guerre/carte-ogun-atlantique.svg"
   - fichier: fete-sao-jorge-rio-2008.jpg
     credit: "Alex Carvalho, Wikimedia Commons"
     licence: "CC BY-SA 2.0"

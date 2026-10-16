@@ -46,11 +46,11 @@ images:
   - fichier: carte-dahomey.svg
     credit: "Orishatory"
     licence: "CC BY 4.0"
-    source: "https://github.com/vidjinnangni/orishatory/blob/main/dossiers/images/dahomey/carte-dahomey.svg"
+    source: "https://github.com/mii-africa/orishatory/blob/main/dossiers/images/dahomey/carte-dahomey.svg"
   - fichier: frise-rois-dahomey.svg
     credit: "Orishatory"
     licence: "CC BY 4.0"
-    source: "https://github.com/vidjinnangni/orishatory/blob/main/dossiers/images/dahomey/frise-rois-dahomey.svg"
+    source: "https://github.com/mii-africa/orishatory/blob/main/dossiers/images/dahomey/frise-rois-dahomey.svg"
   - fichier: trones-royaux-abomey-1930.jpg
     credit: "Frédéric Gadmer, musée départemental Albert-Kahn (recadré)"
     licence: "CC BY-SA 4.0"

@@ -28,7 +28,7 @@ images:
   - fichier: frise-maat.svg
     credit: "Orishatory"
     licence: "CC BY 4.0"
-    source: "https://github.com/vidjinnangni/orishatory/blob/main/dossiers/images/maat-divinite-loi-cosmique-philosophie-de-vie/frise-maat.svg"
+    source: "https://github.com/mii-africa/orishatory/blob/main/dossiers/images/maat-divinite-loi-cosmique-philosophie-de-vie/frise-maat.svg"
   - fichier: figure-maat-met.jpg
     credit: "Metropolitan Museum of Art"
     licence: "CC0 1.0"

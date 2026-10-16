@@ -43,7 +43,7 @@ images:
   - fichier: carte-societes-masques.svg
     credit: "Orishatory"
     licence: "CC BY 4.0"
-    source: "https://github.com/vidjinnangni/orishatory/blob/main/dossiers/images/masques-et-societes-d-initiation/carte-societes-masques.svg"
+    source: "https://github.com/mii-africa/orishatory/blob/main/dossiers/images/masques-et-societes-d-initiation/carte-societes-masques.svg"
   - fichier: costume-egungun-cleveland.jpg
     credit: "Cleveland Museum of Art"
     licence: "CC0 1.0"

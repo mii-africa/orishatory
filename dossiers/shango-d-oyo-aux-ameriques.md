@@ -27,11 +27,11 @@ images:
   - fichier: carte-traversee.svg
     credit: "Orishatory"
     licence: "CC BY 4.0"
-    source: "https://github.com/vidjinnangni/orishatory/blob/main/dossiers/images/shango-d-oyo-aux-ameriques/carte-traversee.svg"
+    source: "https://github.com/mii-africa/orishatory/blob/main/dossiers/images/shango-d-oyo-aux-ameriques/carte-traversee.svg"
   - fichier: carte-traversee-partage.png
     credit: "Orishatory"
     licence: "CC BY 4.0"
-    source: "https://github.com/vidjinnangni/orishatory/blob/main/dossiers/images/shango-d-oyo-aux-ameriques/carte-traversee.svg"
+    source: "https://github.com/mii-africa/orishatory/blob/main/dossiers/images/shango-d-oyo-aux-ameriques/carte-traversee.svg"
   - fichier: oshe-shango-lacma.jpg
     credit: "Los Angeles County Museum of Art"
     licence: "Domaine public"
