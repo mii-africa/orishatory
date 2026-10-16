@@ -32,16 +32,15 @@ const breadcrumb = [{ label: "Accueil", href: "/" }, { label: "Recherche" }];
 
   <section class="container">
     <p id="search-status" class="status" aria-live="polite"></p>
-    <ul id="search-results" class="grid"></ul>
+    <ul id="search-results" class="grid" data-regions={regionLabelsJson} data-categories={categoryLabelsJson}></ul>
   </section>
 </BaseLayout>
 
-<script define:vars={{ regionLabelsJson, categoryLabelsJson }}>
-  const regionLabels = JSON.parse(regionLabelsJson);
-  const categoryLabels = JSON.parse(categoryLabelsJson);
-
+<script is:inline>
   const input = document.getElementById("search-input");
   const resultsEl = document.getElementById("search-results");
+  const regionLabels = JSON.parse(resultsEl.dataset.regions);
+  const categoryLabels = JSON.parse(resultsEl.dataset.categories);
   const statusEl = document.getElementById("search-status");
 
   let index = [];

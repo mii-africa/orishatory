@@ -25,7 +25,7 @@ const paths = [
   description="Cette page n'existe pas ou a changé d'adresse."
   noindex
 >
-  <section class="container lost">
+  <section class="container lost" id="lost" data-regions={regionLabelsJson} data-categories={categoryLabelsJson}>
     <p class="eyebrow">Erreur 404</p>
 
     <svg class="numerals" viewBox="0 0 330 124" fill="none" stroke-width="8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">
@@ -114,11 +114,12 @@ const paths = [
   </section>
 </BaseLayout>
 
-<script define:vars={{ regionLabelsJson, categoryLabelsJson }}>
+<script is:inline>
   // À partir de l'adresse demandée (ex: /shango-dieu), on propose les fiches
   // dont le nom ressemble, et on préremplit la recherche si l'on en trouve.
-  const regionLabels = JSON.parse(regionLabelsJson);
-  const categoryLabels = JSON.parse(categoryLabelsJson);
+  const lost = document.getElementById("lost");
+  const regionLabels = JSON.parse(lost.dataset.regions);
+  const categoryLabels = JSON.parse(lost.dataset.categories);
 
   const norm = (text) => text.normalize("NFD").replace(/\p{M}/gu, "").toLowerCase();
 
