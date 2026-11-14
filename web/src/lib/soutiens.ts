@@ -7,9 +7,9 @@ export interface Soutien {
 }
 
 /**
- * Liste des soutiens financiers du projet (Buy Me a Coffee, GitHub Sponsors...).
+ * Liste des soutiens financiers du projet (Patreon, GitHub Sponsors...).
  * Pas d'intégration automatique : ces plateformes n'exposent pas d'API que ce
- * site statique pourrait interroger au build, et surtout, un don ne vaut pas
+ * site statique pourrait interroger au build, et surtout, un soutien ne vaut pas
  * consentement implicite à être nommé publiquement. On n'ajoute un nom ici
  * que si la personne l'a explicitement demandé (voir web/README.md).
  */

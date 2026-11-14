@@ -160,15 +160,15 @@ build, puis exposée par `getRecentEntities()` dans
 ## Page "Soutiens"
 
 `/soutiens/` liste les personnes qui soutiennent financièrement le projet
-(Buy Me a Coffee, GitHub Sponsors...). La liste vient de
+(Patreon, GitHub Sponsors...). La liste vient de
 [`src/data/soutiens.json`](src/data/soutiens.json), à éditer manuellement :
 
 ```json
 [{ "nom": "Nom affiché", "url": "https://... (optionnel)" }]
 ```
 
-Il n'y a pas d'intégration automatique avec Buy Me a Coffee ou GitHub
+Il n'y a pas d'intégration automatique avec Patreon ou GitHub
 Sponsors (ces plateformes n'exposent pas d'API que ce site statique pourrait
-interroger au build). Plus important : un don ne vaut pas consentement à être
+interroger au build). Plus important : un soutien ne vaut pas consentement à être
 nommé publiquement. N'ajouter quelqu'un que s'il l'a explicitement demandé
-(un message avec le don, une issue GitHub, etc.).
+(un message avec le soutien, une issue GitHub, etc.).
